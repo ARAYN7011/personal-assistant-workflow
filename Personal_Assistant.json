@@ -1,0 +1,384 @@
+{
+  "name": "Personal Assistant",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "messages"
+        ],
+        "options": {}
+      },
+      "type": "n8n-nodes-base.whatsAppTrigger",
+      "typeVersion": 1,
+      "position": [
+        -520,
+        -40
+      ],
+      "id": "c014f92b-b8f9-4636-b049-f13a038be2c7",
+      "name": "WhatsApp Trigger",
+      "webhookId": "9f6178e6-0050-4536-a75c-0241dfb585d5",
+      "credentials": {
+        "whatsAppTriggerApi": {
+          "id": "CClPB3hLGyt6xHyY",
+          "name": "WhatsApp OAuth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "d4307fe0-ed69-4e9c-a14f-369f9d9412f7",
+              "name": "messages[0].text.body",
+              "value": "={{ $json.messages[0].text.body }}  \n{{ $json.messages[0].id }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -300,
+        -40
+      ],
+      "id": "4dadaa04-db70-4454-8e1e-11adf8db5423",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.messages[0].text.body }}",
+        "options": {
+          "systemMessage": "You are a resourceful and intelligent virtual assistant. Your responsibilities include handling:\n\n  a) Calendar events\n  b) Email communications\n  c) Message-based tasks with precision, clarity, and professionalism.\n\n---\n\n Primary Responsibilities \n\n\n\n\n\n3.  Use Pinecone Vector Database (RAG) \n\n  For general questions unrelated to orders, use the vector database to find the best answer.\n\n---\n\n Calendar Event Management \n\nA.  View Calendar Events \n\n  Use the “Get Events” tool to retrieve events based on user queries like:\n   “Show me today’s events”  or  “What meetings do I have tomorrow?” \n  Present events clearly, including:\n\n```\nEvent: [Event Title]  \nTime: [Start Time] - [End Time]  \nLocation: [Location]  \nParticipants:  \n- Name 1 ([Email 1])  \n- Name 2 ([Email 2])\n```\n\nB.  Schedule New Calendar Events \n\n  Ask the user for:\n\n    Event title\n    Start and end time\n    Attendees (names/emails)\n    Description\n  Confirm details before scheduling:\n\n```\nEvent: [Event Title]  \nTime: [Start Time] – [End Time]  \nAttendees: [List of Names/Emails]  \nDescription: [Event Description]\n```\n\n---\n\n Email Management \n\nA.  Retrieve Emails \n\n  Use “Receive Many Emails” tool for queries like:\n   “Show me today’s emails”  or  “Get emails from last week” \n  Summarize emails clearly:\n\n```\nEmail 1:  \n- Subject: [Subject]  \n- From: [Sender Name/Email]  \n- Summary: [Brief description]\n```\n\nB.  Send & Reply to Emails \n\n  Use “Send & Approve Email” tool to compose or reply based on user instructions.\n  Use email templates from the vector store if requested.\n  Always confirm with the user before sending.\n  Example template format:\n\n```\nTemplate: Follow-Up Email  \nTo: [Recipient’s Email]  \nSubject: Follow-up on [Topic]  \nBody:  \nHi [Recipient Name],  \nJust following up on [Reason].  \nBest regards,  \n[Your Name]\n```\n\n---\n\n Tools Available (Use When Needed) \n\n  Vector Store Tool (for retrieving emails, contacts, templates)\n  Calendar Tool (for viewing/creating events)\n  Gmail Tool (for reading/sending emails)\n  SERP Tool (internet search summaries)\n  Perplexity Tool (deeper online research)\n\n---\n\n Ambiguity Management \n\n  If user input is unclear (e.g., “Invite Sarah”), resolve the full identity using the vector tool.\n  If multiple matches, ask the user to clarify.\n\n---\n\n Example Query and Response \n\n User:  “Show me today’s events.”\n Assistant: \n\n```\n1. Event: Weekly Standup  \nTime: 10:00 AM – 10:30 AM  \nLocation: Zoom Room A  \nParticipants:  \n- Alex (alex@example.com)  \n- Priya (priya@example.com)\n\n2. Event: Product Sync  \nTime: 2:00 PM – 3:00 PM  \nLocation: Meeting Room B  \nParticipants:  \n- John (john@example.com)  \n- Jane (jane@example.com)\n```\n\n\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.9,
+      "position": [
+        292,
+        -40
+      ],
+      "id": "69ad868b-9a87-403f-a103-cbdf015af0f1",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.0-flash-thinking-exp",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        140,
+        180
+      ],
+      "id": "e1b5879b-1523-40d2-b72f-11a3149402f1",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "exekbmGnCOnCRN2H",
+          "name": "Google Gemini(PaLM) Api account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "send",
+        "phoneNumberId": "713358081851588",
+        "recipientPhoneNumber": "+918595966226",
+        "textBody": "={{ $json.output }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.whatsApp",
+      "typeVersion": 1,
+      "position": [
+        820,
+        -40
+      ],
+      "id": "fa9e20a6-e547-436b-9d2e-4bbdba212451",
+      "name": "WhatsApp Business Cloud",
+      "webhookId": "82914c2a-9ae6-4533-b867-1c87eee42be5",
+      "credentials": {
+        "whatsAppApi": {
+          "id": "M3ycNuTWHg64Nsff",
+          "name": "WhatsApp account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "090daeb9-5255-4f9f-9f6f-c8cc5b918278",
+              "leftValue": "={{ $json.messages[0]?.text?.body }}",
+              "rightValue": "null",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -80,
+        -40
+      ],
+      "id": "2d1ffdd2-985c-44fb-9f14-16aa2b0c8ac9",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "description": "call this tool when you got task for calender, event create, get, delete or update",
+        "workflowId": {
+          "__rl": true,
+          "value": "R8ZL861dye5oQasD",
+          "mode": "list",
+          "cachedResultName": "calender event"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        380,
+        180
+      ],
+      "id": "bfce33eb-a2d5-4f96-84ea-c02d7a0c7c48",
+      "name": "calendar agent"
+    },
+    {
+      "parameters": {
+        "description": "call this tool when user task related to emails if user ask to send or get the emails use this tool",
+        "workflowId": {
+          "__rl": true,
+          "value": "oWV4hhVen74cLsje",
+          "mode": "list",
+          "cachedResultName": "email agent"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [
+            "userMessage"
+          ],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        500,
+        180
+      ],
+      "id": "d5ec5d40-6f89-4a5c-8196-8a1a74d49a5c",
+      "name": "email agent"
+    },
+    {
+      "parameters": {
+        "toolDescription": "use this to search the web and get the information",
+        "method": "POST",
+        "url": "https://api.perplexity.ai/chat/completions",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer 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"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"model\": \"sonar-pro\",\n  \"messages\": [\n    {\n      \"role\": \"system\",\n      \"content\": \"YOU'RE a helpful assistant who must look at the input to do research for. here is todays date << Snow >>\"\n    },\n    {\n      \"role\": \"user\",\n      \"content\": \"{{ $fromAI('input', 'provide what want to be searched', 'string') }}\"\n    }\n  ],\n  \"max_tokens\": 200,\n  \"temperature\": 0.2,\n  \"top_p\": 0.9,\n  \"return_citations\": true,\n  \"search_domain_filter\": [\n    \"perplexity.ai\"\n  ],\n  \"return_images\": false,\n  \"return_related_questions\": false,\n  \"search_recency_filter\": \"month\",\n  \"top_k\": 0,\n  \"stream\": false,\n  \"presence_penalty\": 0,\n  \"frequency_penalty\": 1\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [
+        620,
+        180
+      ],
+      "id": "7751bd38-dfb9-4cee-9a0e-96fe8711c115",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $(\"WhatsApp Trigger\").item.json.contacts[0].wa_id }}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryZep",
+      "typeVersion": 1.3,
+      "position": [
+        260,
+        180
+      ],
+      "id": "f23b7774-3abd-4409-9a8a-f4f248c26231",
+      "name": "Zep1",
+      "credentials": {
+        "zepApi": {
+          "id": "6IFxDHGlKitcBuXS",
+          "name": "Zep Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $(\"WhatsApp Trigger\").item.json.contacts[0].wa_id }}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryZep",
+      "typeVersion": 1.3,
+      "position": [
+        -520,
+        320
+      ],
+      "id": "60c9cb67-e643-40b5-8a29-3004e808ae82",
+      "name": "Zep",
+      "credentials": {
+        "zepApi": {
+          "id": "6IFxDHGlKitcBuXS",
+          "name": "Zep Api account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "WhatsApp Trigger": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "WhatsApp Business Cloud",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "calendar agent": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "email agent": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Zep1": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "versionId": "606a75ca-92da-4989-b01a-643e16aa026f",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "7eae5956f7904ecf21cd7eb1cb0b73f227c1ddcc62aae513ab9cb632e87fed46"
+  },
+  "id": "P5kJ0xQlx2hr3IaZ",
+  "tags": []
+}
